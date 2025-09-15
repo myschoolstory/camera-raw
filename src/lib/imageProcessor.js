@@ -26,16 +26,22 @@ export class ImageProcessor {
   }
 
   loadImage(imageElement) {
-    this.canvas.width = imageElement.naturalWidth;
-    this.canvas.height = imageElement.naturalHeight;
-    this.ctx.drawImage(imageElement, 0, 0);
-    this.originalImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-    this.currentImageData = new ImageData(
-      new Uint8ClampedArray(this.originalImageData.data),
-      this.canvas.width,
-      this.canvas.height
-    );
-    return this.originalImageData;
+    try {
+      this.canvas.width = imageElement.naturalWidth;
+      this.canvas.height = imageElement.naturalHeight;
+      this.ctx.drawImage(imageElement, 0, 0);
+      this.originalImageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+      this.currentImageData = new ImageData(
+        new Uint8ClampedArray(this.originalImageData.data),
+        this.canvas.width,
+        this.canvas.height
+      );
+      console.log('Image loaded successfully:', imageElement.naturalWidth, 'x', imageElement.naturalHeight);
+      return this.originalImageData;
+    } catch (error) {
+      console.error('Error in loadImage:', error);
+      throw error;
+    }
   }
 
   applyAdjustments() {

@@ -33,6 +33,7 @@ const ImageCanvas = ({
   useEffect(() => {
     if (imageFile && imageProcessorRef.current) {
       const img = new Image();
+      img.crossOrigin = 'anonymous'; // Enable CORS for external images
       img.onload = () => {
         // Calculate canvas size to fit container while maintaining aspect ratio
         const containerWidth = 800; // Max width
@@ -73,12 +74,20 @@ const ImageCanvas = ({
         }
       };
       
+      img.onerror = (error) => {
+        console.error('Error loading image:', error);
+        console.error('Image src:', img.src);
+      };
+      
       if (typeof imageFile === 'string') {
         img.src = imageFile;
       } else {
         const reader = new FileReader();
         reader.onload = (e) => {
           img.src = e.target.result;
+        };
+        reader.onerror = (error) => {
+          console.error('Error reading file:', error);
         };
         reader.readAsDataURL(imageFile);
       }
@@ -194,7 +203,8 @@ const ImageCanvas = ({
               style={{
                 width: canvasSize.width,
                 height: canvasSize.height,
-                display: showOriginal ? 'none' : 'block'
+                display: showOriginal ? 'none' : 'block',
+                maxWidth: '100%'
               }}
               className="border border-gray-600 rounded shadow-lg bg-white"
             />
@@ -205,7 +215,8 @@ const ImageCanvas = ({
               style={{
                 width: canvasSize.width,
                 height: canvasSize.height,
-                display: showOriginal ? 'block' : 'none'
+                display: showOriginal ? 'block' : 'none',
+                maxWidth: '100%'
               }}
               className="border border-gray-600 rounded shadow-lg bg-white"
             />
